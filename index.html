@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Кликер</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 40px; background: #f5f5f5; }
+    h1 { color: #333; }
+    #score { font-size: 2.5em; color: #2c3e50; margin: 20px 0; }
+    button { padding: 15px 30px; font-size: 1.2em; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 6px; }
+    button:active { transform: scale(0.98); }
+    .upgrade { margin-top: 20px; }
+    .upgrade button { background: #2ecc71; }
+  </style>
+</head>
+<body>
+  <h1>Твой кликер</h1>
+  <div id="score">0</div>
+  <button id="clickBtn">Клик!</button>
+
+  <div class="upgrade">
+    <p>Улучшение: +1 за клик (стоит 50 очков)</p>
+    <button id="buyUpgrade">Купить (50)</button>
+  </div>
+
+  <script>
+    let score = 0;
+    let clickPower = 1;
+    const upgradeCost = 50;
+
+    const scoreEl = document.getElementById('score');
+    const clickBtn = document.getElementById('clickBtn');
+    const buyBtn = document.getElementById('buyUpgrade');
+
+    function updateUI() {
+      scoreEl.textContent = score;
+    }
+
+    clickBtn.addEventListener('click', () => {
+      score += clickPower;
+      updateUI();
+    });
+
+    buyBtn.addEventListener('click', () => {
+      if (score >= upgradeCost) {
+        score -= upgradeCost;
+        clickPower += 1;
+        updateUI();
+        buyBtn.textContent = `Куплено! Теперь +${clickPower}`;
+        buyBtn.disabled = true;
+      }
+    });
+
+    // Сохранение прогресса в браузере
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('clicker_score', score);
+      localStorage.setItem('clicker_power', clickPower);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedScore = localStorage.getItem('clicker_score');
+      const savedPower = localStorage.getItem('clicker_power');
+      if (savedScore !== null) score = Number(savedScore);
+      if (savedPower !== null) clickPower = Number(savedPower);
+      updateUI();
+    });
+  </script>
+</body>
+</html>
